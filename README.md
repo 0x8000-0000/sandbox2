@@ -24,6 +24,12 @@ Conan 1.32 (or later)
 Everything else is imported via Conan packages.
 
 
+Building
+--------
+
+conan install ../sandbox2 --profile=clang.11.dbg  -s compiler.cppstd=20
+
+
 License
 -------
 
