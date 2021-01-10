@@ -25,6 +25,30 @@ constexpr uint64_t fnv1(std::string_view input)
    return hashValue;
 }
 
+template <typename Kind>
+struct Field
+{
+   using Type = typename Kind::Type;
+
+   Field() = default;
+
+   explicit constexpr Field(Type aValue) : value{aValue}
+   {
+   }
+
+   constexpr auto getName() const noexcept
+   {
+      return Kind::Name;
+   }
+
+   constexpr auto getHash() const noexcept
+   {
+      return Kind::Hash;
+   }
+
+   Type value;
+};
+
 struct Width
 {
    using Type = uint32_t;
@@ -43,24 +67,22 @@ struct Height
    static constexpr uint64_t Hash = fnv1(Name);
 };
 
-template <typename Kind>
-struct Field
+struct Top
 {
-   explicit constexpr Field(typename Kind::Type aValue) : value{aValue}
-   {
-   }
+   using Type = uint32_t;
 
-   constexpr auto getName() const noexcept
-   {
-      return Kind::Name;
-   }
+   static constexpr std::string_view Name = "top";
 
-   constexpr auto getHash() const noexcept
-   {
-      return Kind::Hash;
-   }
+   static constexpr uint64_t Hash = fnv1(Name);
+};
 
-   typename Kind::Type value;
+struct Left
+{
+   using Type = uint32_t;
+
+   static constexpr std::string_view Name = "left";
+
+   static constexpr uint64_t Hash = fnv1(Name);
 };
 
 struct RectangleSize
@@ -88,6 +110,45 @@ struct RectangleSize
    Field<Height> height{0};
 };
 
+struct Target
+{
+   using Type = RectangleSize;
+
+   static constexpr std::string_view Name = "target";
+
+   static constexpr uint64_t Hash = fnv1(Name);
+};
+
+struct Param
+{
+   Field<Target> target;
+
+   Field<Top>  top;
+   Field<Left> left;
+};
+
+// https://hackernoon.com/variadic-template-in-c-implementing-unsophisticated-tuple-w8153ump
+
+template <typename... T>
+struct Tuple
+{
+};
+
+template <typename T,
+          typename... Rest // Template parameter pack
+          >
+struct Tuple<T, Rest...> // Class parameter pack
+{
+   Field<T>       first;
+   Tuple<Rest...> rest; // Parameter pack expansion
+
+   Tuple() = default;
+
+   Tuple(const T& f, const Rest&... r) : first(f), rest(r...)
+   {
+   }
+};
+
 int main()
 {
    Field<Width>  f1{5};
@@ -101,6 +162,11 @@ int main()
    fmt::print("Before: {}\n", rs.width.value);
    rs.set(Width::Name, 5);
    fmt::print("After:  {}\n", rs.width.value);
+
+   Tuple<Width, Height> sample;
+
+   sample.first.value = 5;
+   sample.rest.first.value = 7;
 
    return 0;
 }
