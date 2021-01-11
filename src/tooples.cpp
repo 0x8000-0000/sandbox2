@@ -98,6 +98,8 @@ struct Field
 {
    using Type = typename Kind::Type;
 
+   static constexpr auto Name = Kind::Name;
+
    Field() = default;
 
    explicit constexpr Field(Type aValue) : value{aValue}
@@ -202,6 +204,8 @@ struct ParamGroup
 {
    using Tuple = std::tuple<Field<Args>...>;
 
+   static constexpr std::array<std::string_view, std::tuple_size<Tuple>::value> Names = {{Args::Name...}};
+
    template <typename T>
    auto get()
    {
@@ -277,6 +281,12 @@ int main()
 
    rs2.set("ratio", "2.71");
    fmt::print("RS2 ratio: {}\n", rs2.get("ratio"));
+
+   fmt::print("Field names:\n");
+   for (const auto name : Rs2::Names)
+   {
+      fmt::print("   {}\n", name);
+   }
 
    return 0;
 }
