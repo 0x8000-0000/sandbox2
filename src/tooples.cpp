@@ -199,12 +199,35 @@ struct RectangleSize
    TupleType value;
 };
 
+template <typename T, std::size_t N>
+constexpr bool isSorted(const std::array<T, N>& arr)
+{
+   if (N == 0)
+   {
+      return true;
+   }
+
+   auto last = arr[0];
+   for (auto elem : arr)
+   {
+      if (last > elem)
+      {
+         return false;
+      }
+      last = elem;
+   }
+
+   return true;
+}
+
 template <typename... Args>
 struct ParamGroup
 {
    using Tuple = std::tuple<Field<Args>...>;
 
    static constexpr std::array<std::string_view, std::tuple_size<Tuple>::value> Names = {{Args::Name...}};
+
+   static_assert(isSorted(Names), "Type names need to be sorted");
 
    template <typename T>
    auto get()
@@ -268,7 +291,8 @@ int main()
    rs.set<Width>(5u);
    fmt::print("RS Width: {}\n", rs.get<Width>());
 
-   using Rs2 = ParamGroup<Width, Height, Ratio>;
+   // using Rs2 = ParamGroup<Width, Height, Ratio>;  // not sorted, fails to compile!
+   using Rs2 = ParamGroup<Height, Ratio, Width>;
 
    fmt::print("sizeof(Rs2) = {}\n", sizeof(Rs2));
 
