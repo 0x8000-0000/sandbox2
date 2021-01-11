@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <tuple>
+#include <utility>
 
 constexpr uint64_t fnv1(std::string_view input)
 {
@@ -137,6 +138,11 @@ struct Field
       return "";
    }
 
+   std::string getAsString() const
+   {
+      return Kind::get(value);
+   }
+
    Type value;
 };
 
@@ -255,6 +261,46 @@ struct ParamGroup
       return result;
    }
 
+private:
+   template <size_t N>
+   static std::string getString(const Tuple& tup) noexcept
+   {
+      return std::get<N>(tup).getAsString();
+   }
+
+   /*
+    * TODO: simplify this
+    */
+   using GetAsStringType = std::string (*)(const Tuple& tup);
+
+   template <typename TheTuple, typename Indices = std::make_index_sequence<std::tuple_size<TheTuple>::value>>
+   struct runtime_get_func_table;
+
+   template <typename TheTuple, size_t... Indices>
+   struct runtime_get_func_table<TheTuple, std::index_sequence<Indices...>>
+   {
+      static constexpr std::array<GetAsStringType, std::tuple_size<TheTuple>::value> GetAsStringHelpers = {
+         {&getString<Indices>...}};
+   };
+
+   static constexpr runtime_get_func_table<Tuple> getLookup;
+
+public:
+   std::string getFast(std::string_view name)
+   {
+      const auto iter = std::lower_bound(Names.begin(), Names.end(), name);
+      if (iter == Names.end())
+      {
+         throw std::invalid_argument(fmt::format("{} is not a valid field name", name));
+      }
+
+      const auto pos = std::distance(Names.begin(), iter);
+
+      const auto func = getLookup.GetAsStringHelpers[pos];
+
+      return func(value);
+   }
+
    Tuple value;
 };
 
@@ -311,6 +357,18 @@ int main()
    {
       fmt::print("   {}\n", name);
    }
+
+#if 0
+   fmt::print("2nd parameter value: {}\n", Rs2::getString<1>(rs2.value));
+
+   const auto func = Rs2::getLookup.GetAsStringHelpers[1];
+
+   fmt::print("2nd parameter value: {}\n", func(rs2.value));
+#endif
+
+   fmt::print("width parameter value: {}\n", rs2.getFast("width"));
+   fmt::print("height parameter value: {}\n", rs2.getFast("height"));
+   fmt::print("ratio parameter value: {}\n", rs2.getFast("ratio"));
 
    return 0;
 }
