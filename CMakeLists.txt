@@ -11,6 +11,8 @@ set(CMAKE_CXX_EXTENSIONS False)
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup(TARGETS NO_OUTPUT_DIRS)
 
+find_package(Threads)
+
 add_library(project_options INTERFACE)
 
 add_library(project_warnings INTERFACE)
