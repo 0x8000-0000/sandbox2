@@ -283,7 +283,7 @@ private:
          {&getString<Indices>...}};
    };
 
-   static constexpr runtime_get_func_table<Tuple> getLookup;
+   static constexpr runtime_get_func_table<Tuple> getLookup{};
 
 public:
    std::string getFast(std::string_view name)
