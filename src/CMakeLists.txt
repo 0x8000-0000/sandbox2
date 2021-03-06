@@ -21,3 +21,7 @@ target_link_libraries(synchro PUBLIC CONAN_PKG::fmt Threads::Threads)
 add_executable(sequences sequences.cpp)
 target_link_libraries(sequences PUBLIC project_options project_warnings)
 target_link_libraries(sequences PUBLIC CONAN_PKG::fmt CONAN_PKG::frozen)
+
+add_executable(out_stream out_stream.cpp)
+target_link_libraries(out_stream PUBLIC project_options project_warnings)
+target_link_libraries(out_stream PUBLIC CONAN_PKG::fmt CONAN_PKG::frozen)
