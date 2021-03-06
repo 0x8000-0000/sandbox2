@@ -18,7 +18,7 @@ class Sandbox2(ConanFile):
     def requirements(self):
         self.requires("fmt/7.1.3")
         self.requires("nlohmann_json/3.9.1")
-        self.requires("frozen/1.0.0")
+        self.requires("frozen/1.0.1")
 
     def configure(self):
         tools.check_min_cppstd(self, "20")
