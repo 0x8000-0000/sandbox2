@@ -66,6 +66,7 @@ void start(int count)
             const auto id = std::hash<std::thread::id>()(std::this_thread::get_id());
 
             fmt::print("Thread {:x} started\n", id);
+            fflush(stdout);
 
             while (!st.stop_requested())
             {
@@ -80,6 +81,7 @@ void start(int count)
    startFlag.wait();
 
    fmt::print("All {} threads started\n", count);
+   fflush(stdout);
 }
 
 void stop()
