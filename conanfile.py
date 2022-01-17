@@ -16,8 +16,8 @@ class Sandbox2(ConanFile):
         pass
 
     def requirements(self):
-        self.requires("fmt/7.1.3")
-        self.requires("nlohmann_json/3.9.1")
+        self.requires("fmt/8.1.1")
+        self.requires("nlohmann_json/3.10.5")
         self.requires("frozen/1.0.1")
 
     def configure(self):
