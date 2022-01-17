@@ -1,3 +1,4 @@
+#include <fmt/core.h>
 #include <frozen/string.h>
 #include <frozen/unordered_map.h>
 
