@@ -25,3 +25,7 @@ target_link_libraries(sequences PUBLIC CONAN_PKG::fmt CONAN_PKG::frozen)
 add_executable(out_stream out_stream.cpp)
 target_link_libraries(out_stream PUBLIC project_options project_warnings)
 target_link_libraries(out_stream PUBLIC CONAN_PKG::fmt CONAN_PKG::frozen)
+
+add_executable(discoverable_setters discoverable_setters.cpp)
+target_link_libraries(discoverable_setters PUBLIC project_options project_warnings)
+target_link_libraries(discoverable_setters PUBLIC CONAN_PKG::fmt)
